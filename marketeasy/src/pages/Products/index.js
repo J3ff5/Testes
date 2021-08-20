@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { ProductsService } from '../../services/productsService';
+import { useDispatch } from 'react-redux'
 
 export default function Products({navigation}) {
 
-    const [products, setProducts] = useState([]);
+    const dispatch = useDispatch()
+    const [products, setProducts] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const productsController = new ProductsService();
 
@@ -13,10 +15,18 @@ export default function Products({navigation}) {
         loadProducts();
     }, []);
 
+    
+
     async function loadProducts(){
         const result = await productsController.getProducts();
         setProducts(result);
         setIsLoading(false);
+    }
+
+    function logout(){
+        dispatch({
+            type: 'REMOVE_TOKEN',
+        })
     }
 
     return (
@@ -33,24 +43,30 @@ export default function Products({navigation}) {
                     </View>
                     :
                     <View style={styles.products}>
-                        <ScrollView>
                         {
-                            Array.isArray(products) && products?.map((product, index) => {
-                                return (
-                                    <View style={styles.product} key={index} >
-                                        <Text style={styles.productText}>{product.descricao}</Text>
-                                        <Text style={styles.productText}>R$ {product.valorUnitario}</Text>
-                                    </View>
-                                )
-                            })
+                            <ScrollView>
+                            {
+                                Array.isArray(products) ? products?.map((product, index) => {
+                                    return (
+                                        <View style={styles.product} key={index} >
+                                            <Text style={styles.productText}>{product.descricao}</Text>
+                                            <Text style={styles.productText}>R$ {product.valorUnitario}</Text>
+                                        </View>
+                                    )
+                                }) 
+                                :
+                                <View style={styles.noFound} >
+                                    <Text style={styles.noFoundText}> Nenhum produto encontrado </Text>
+                                </View> 
+                            }
+                            </ScrollView>
                         }
-                        </ScrollView>
                     </View>
             }
 
-            <View style={styles.containerButton} >
-                <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={() => {navigation.navigate('Login')}} >
-                    <Text style={styles.buttonText} >Sair</Text>
+            <View style={styles.containerButton}>
+                <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={() => logout()}>
+                    <Text style={styles.buttonText}> Sair </Text>
                 </TouchableOpacity>
             </View>
 
@@ -145,5 +161,18 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+
+    noFound: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+    },
+
+    noFoundText: {
+        color: '#000',
+        fontSize: 20,
+        fontFamily: 'Avenir',
+        fontWeight: 'bold',
     },
 })

@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard, Image, TouchableOpacity, ToastAndroid } from 'react-native';
 import { AuthService } from '../../services/authService';
 import Toast from 'react-native-simple-toast';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch } from 'react-redux';
 
 
 export default function Login({navigation}) {
 
-    const [user, setUser] = useState('');
-    const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
+    const [user, setUser] = useState('100000');
+    const [password, setPassword] = useState('123456');
     const authController = new AuthService();
 
     async function login(){
@@ -18,9 +19,16 @@ export default function Login({navigation}) {
         if(result.status !== 'ok'){
             Toast.show(result.messages[0].message, Toast.LONG);
         } else {
-            AsyncStorage.setItem('@app_token', result.token);
-            navigation.navigate('Products');
+            hasToken(result.token, result.tokenExpiration);
         }
+    }
+
+    function hasToken(token, tokenExpiration){
+        dispatch({
+            type: 'SET_TOKEN',
+            token,
+            tokenExpiration
+        })
     }
 
     return (
