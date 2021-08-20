@@ -34,14 +34,4 @@ export class AuthService {
         const response = await api.post('v1.1/auth', body)
         return response.data.response
     }
-
-
-    /**
-     * Tries to logout the current user
-     * 
-     * 
-    */
-    async logout(){
-
-    }
 }

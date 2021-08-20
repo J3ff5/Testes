@@ -15,6 +15,14 @@ export default function Routes() {
 
   const logout = useSelector(state => state.token)
 
+
+  /**
+   * Will be called when the user is logged in and logout, if the user allready is logged in, will
+   * check if the token is valid and if it is, will not logout.
+   * 
+   * @param {string} token the string token that is stored in the async storage
+   * @returns {boolean} true if the token is valid, false if not.
+  */
   useEffect(() => {
     async function getToken() {
       const token = await AsyncStorage.getItem('@app_token');
