@@ -8,8 +8,8 @@ import { useDispatch } from 'react-redux';
 export default function Login({navigation}) {
 
     const dispatch = useDispatch();
-    const [user, setUser] = useState('100000');
-    const [password, setPassword] = useState('123456');
+    const [user, setUser] = useState('');
+    const [password, setPassword] = useState('');
     const authController = new AuthService();
 
     async function login(){
